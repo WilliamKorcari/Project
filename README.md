@@ -6,6 +6,6 @@ The software developed for this project is basically divided in two main algorit
 
 ## Documentation.
 
-# **data_converter.ipynb**:
+### **data_converter.ipynb**:
 
-_get_file_name(fname = "analysis.root")_
+get_file_name(fname = "analysis.root")

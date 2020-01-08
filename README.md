@@ -74,13 +74,13 @@ Takes a list of file and applies label_column_writer() method to each one. Overw
 
 #### How to use:
 
-- initialize variable "FILE" with _get_file_name(fname)_ method.
+- initialize variable "FILE" with _get_file_name(fname)_ method;
 
--initialize variable "CSV_FILES" with _root_tree_to_csv(file = FILE)_ method.
+- initialize variable "CSV_FILES" with _root_tree_to_csv(file = FILE)_ method;
 
-- (optional): initialize variable "LABELED_CSV_FILES" with _add_label_column(CSV_FILES)_ method.
+- (optional): initialize variable "LABELED_CSV_FILES" with _add_label_column(CSV_FILES)_ method;
 
-- call _file_merger()_
+- call _file_merger()_.
 
 
 

@@ -23,7 +23,7 @@ The software developed for this project is basically divided in two main algorit
 - get_tree_names(f_name): 
 
 	Takes as an argument a file name (*string*). Looks for root trees inside that file and **returns** a list of the cleaned up tree names.
-	***It is strongly raccomended to use what _get_file_name()_ returns in order to avoid errors***
+	***It is strongly raccomended to use what _get_file_name()_ returns in order to avoid errors.***
 
 - unroll_tree(file_name, ttree, of_name):
 
@@ -42,4 +42,42 @@ This method __returns__ a _.csv_ file that contains the converted data from a si
 Also checks if the resulting file from the operation already exists and overwrites them depending on how the __overwrite__ is set (__False__ by default).
 	
 
-label_column_writer(infile, outfile, fsignal = "signal_bbA_MA300tree.csv"):
+- label_column_writer(infile, outfile, fsignal = "signal_bbA_MA300tree.csv"):
+
+	takes 3 strings as arguments: 
+
+ 		- infile: string. Sets the input file name;
+
+		- outfile: string. Sets the output file name;
+
+		- fsignal: A string used to identify the signal file. Each file name is compared to that string, if the strings match the algorithm identifies the file as a signal file.
+
+	This method manipulates the input file in order to add a *label* column and to fill in values ('background' or 'signal' for each entry of the file.
+
+- add_label_column(f_to_modify = [], overwrite = False):
+
+	1. f_to_modify: list of file names of files (.csv format);
+	
+	2. overwrite: True/False. False by default.
+
+Takes a list of file and applies label_column_writer() method to each one. Overwrites, depending on set argument, if file already exists.
+
+- file_merger(outfile_name, overwrite = False):
+
+	1. outfile_name: string. Sets the name of the file produced. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

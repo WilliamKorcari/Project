@@ -45,11 +45,11 @@ Also checks if the resulting file from the operation already exists and overwrit
 
 - label_column_writer(infile, outfile, fsignal = "signal_bbA_MA300tree.csv"):
 
- 		- infile: string. Sets the input file name;
+	- infile: string. Sets the input file name;
 
-		- outfile: string. Sets the output file name;
+	- outfile: string. Sets the output file name;
 
-		- fsignal: A string used to identify the signal file. Each file name is compared to that string, if the strings match the algorithm identifies the file as a signal file.
+	- fsignal: A string used to identify the signal file. Each file name is compared to that string, if the strings match the algorithm identifies the file as a signal file.
 
 	This method manipulates the input file in order to add a *label* column and to fill in values ('background' or 'signal' for each entry of the file.
 
@@ -74,13 +74,13 @@ Takes a list of file and applies label_column_writer() method to each one. Overw
 
 #### How to use:
 
-	- initialize variable "FILE" with _get_file_name(fname)_ method.
-	
-	-initialize variable "CSV_FILES" with _root_tree_to_csv(file = FILE)_ method.
+- initialize variable "FILE" with _get_file_name(fname)_ method.
 
-	- (optional): initialize variable "LABELED_CSV_FILES" with _add_label_column(CSV_FILES)_ method.
+-initialize variable "CSV_FILES" with _root_tree_to_csv(file = FILE)_ method.
 
-	- call _file_merger()_
+- (optional): initialize variable "LABELED_CSV_FILES" with _add_label_column(CSV_FILES)_ method.
+
+- call _file_merger()_
 
 
 

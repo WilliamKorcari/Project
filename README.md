@@ -10,7 +10,7 @@ The software developed for this project is basically divided in two main algorit
 
 - get_file_name(fname = "analysis.root"):
 
-	Takes a string as an argument and checks if a file named as the argument string:
+	Takes a string as an argument (default "analysis.root"). Checks if a file named as the argument string:
 
 		1. exists;
 
@@ -40,11 +40,10 @@ This method __returns__ a _.csv_ file that contains the converted data from a si
 
 	This function uses the previous methods to convert every root tree inside the desired file in to a _.csv_ file.
 Also checks if the resulting file from the operation already exists and overwrites them depending on how the __overwrite__ is set (__False__ by default).
+**returns** list of string (names ofproduced files).
 	
 
 - label_column_writer(infile, outfile, fsignal = "signal_bbA_MA300tree.csv"):
-
-	takes 3 strings as arguments: 
 
  		- infile: string. Sets the input file name;
 
@@ -56,17 +55,32 @@ Also checks if the resulting file from the operation already exists and overwrit
 
 - add_label_column(f_to_modify = [], overwrite = False):
 
-	1. f_to_modify: list of file names of files (.csv format);
+	- f_to_modify: list of file names of files (.csv format);
 	
-	2. overwrite: True/False. False by default.
+	- overwrite: True/False. False by default.
 
 Takes a list of file and applies label_column_writer() method to each one. Overwrites, depending on set argument, if file already exists.
+**returns** list of string (names ofproduced files).
 
-- file_merger(outfile_name, overwrite = False):
+- file_merger(infile_names, outfile_name, overwrite = False):
+	
+	- infile_names = list of strings. Sets the name of file to merge.
+	
+	- outfile_name: string. Sets the name of the file produced as an outcome of the method;
 
-	1. outfile_name: string. Sets the name of the file produced. 
+	- overwrite: True/False (default False).
 
+	This function takes all file that have the 'label column' and merges them all together.
 
+#### How to use:
+
+	- initialize variable "FILE" with _get_file_name(fname)_ method.
+	
+	-initialize variable "CSV_FILES" with _root_tree_to_csv(file = FILE)_ method.
+
+	- (optional): initialize variable "LABELED_CSV_FILES" with _add_label_column(CSV_FILES)_ method.
+
+	- call _file_merger()_
 
 
 

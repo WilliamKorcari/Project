@@ -83,8 +83,22 @@ Takes a list of file and applies label_column_writer() method to each one. Overw
 - call _file_merger()_.
 
 
+### **signal_classifier.ipynb**:
 
+This file is an attempt of signal classification by the application of a very basic neural network model.
+Very few methods are defined whithin this file.
 
+- plot_metrics(history): plots different variables after performing training of the aNN.
+
+- plot_confusion_matrix(y_true, y_pred, classes,
+                          class_names = None,
+                          normalize=False,
+                          title=None,
+                          cmap=plt.cm.Greens): plots the confusion Matrix. Can normalize results by setting 'normalize = True'.
+
+- make_model(metrics = METRICS, output_bias = None): defines the aNN model. 
+
+        output_bias can be set in order to try to improve training results.
 
 
 

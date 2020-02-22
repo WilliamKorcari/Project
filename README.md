@@ -6,6 +6,9 @@ The software developed for this project is basically divided in two main algorit
 
 ## Documentation.
 
+### How to:
+Start by using the data converter in order to produce the *.csv* on which classification is doable. 
+
 ### **data_converter.ipynb**:
 
 - get_file_name(fname = "analysis.root"):

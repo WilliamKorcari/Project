@@ -23,11 +23,15 @@ You also must install uproot library which can be obtained via pip command:
 or via conda. 
 
 List of other common python libraries needed to execute this software:
+
     1. Numpy
     2. Pandas
     3. Matplotlib
     4. csv
     5. unittest
+    6. tensorflow
+    7. keras
+    
 All of this are easily obtained via pip or conda.
 
 

@@ -1,10 +1,7 @@
-#!/usr/bin/env python
-# coding: utf-8
 
 
 import os
 import tempfile
-import unittest
 import numpy as np
 from pandas import read_csv
 import matplotlib as mpl
@@ -30,8 +27,12 @@ from sklearn.preprocessing import StandardScaler
 
 def plot_metrics(history):
     """
-    This function plots performance of classifier considering different metrics.
+    - plot_metrics(history): plots different variables after performing training of the aNN.
     """
+    mpl.rcParams['figure.figsize'] = (12, 10)
+    colors = plt.rcParams['axes.prop_cycle'].by_key()['color']    #plot configurations
+
+
     metrics =  ['loss', 'AUC', 'precision', 'recall']
     for n, metric in enumerate(metrics):
         name = metric.replace("_"," ").capitalize()
@@ -113,7 +114,10 @@ def plot_confusion_matrix(y_true, y_pred, classes,
 
 def make_model(metrics = None, output_bias = None):   
     """
-    This function defines the classifier model
+    defines the aNN model.
+    1. metrics: list of metrics to be used for classification
+    2. output_bias: bias to apply (hypertuning)
+
     """
     if metrics == None:
         print('Found no metric to use. Add at least one metric to continue')
@@ -143,12 +147,9 @@ def make_model(metrics = None, output_bias = None):
                  )
     return model
 
+"""
 
-
-def load_dataset(dataset_name, start_col, end_col):
-    """
-    This method loads the dataset if it exists
-    """
+def set_dataset_par(dataset_name, start_col, end_col):
     if not os.path.isfile(dataset_name):
         raise FileNotFoundError
     if start_col < 0 or start_col > end_col or end_col<0:
@@ -163,19 +164,21 @@ def load_dataset(dataset_name, start_col, end_col):
     }
     
     return info
+"""
 
 
+def classifier(file, first_col, last_col, epochs, batch_size, seed = 13):
+    """
+1. first_col: first column to consider for the dataset
+    2. last_col: last column to consider for the dataset (tipically label column)
+    3. epochs: positive integer number.
+    4. batch_size: positive integer number. 
+    5. seed: positive integer number.
+    
+    Performs classification and plots metrics and confusion matrix.
 
-def classifier(first_col, last_col, epochs, batch_size, seed = 13):
+    """
 
-    mpl.rcParams['figure.figsize'] = (12, 10)
-    colors = plt.rcParams['axes.prop_cycle'].by_key()['color']    #plot configurations
-
-
-    if epochs<=0 or batch_size <=0:
-        print ('Wrong parameters given: check epochs and batch_size')
-        raise ValueError
-        return
     np.random.seed(seed) 
     METRICS = [                                                  
                 AUC(name = 'AUC'),
@@ -185,13 +188,13 @@ def classifier(first_col, last_col, epochs, batch_size, seed = 13):
                ]                                        #metrics: modify here to add or remove metric
 
 
-    dset = load_dataset("analysis.csv", start_col=first_col, end_col=last_col)    
-    dataframe = read_csv(dset["dataset_name"], header=0)
+    #dset = load_dataset("analysis.csv", start_col=first_col, end_col=last_col)    
+    dataframe = read_csv(file, header=0)
     dataset = dataframe.values
 
 
-    X = dataset[:,int(dset["first_column"] ):int(dset["last_column"])].astype(float)   
-    Y = dataset[:,int(dset["last_column"])] #label column (15th) into Y 
+    X = dataset[:,first_col:last_col].astype(float)   
+    Y = dataset[:,last_col] #label column (15th) into Y 
 
     #Encode class values as integers
     encoder = LabelEncoder()
@@ -232,25 +235,26 @@ def classifier(first_col, last_col, epochs, batch_size, seed = 13):
     print('Training features shape:', X_train.shape)
     print('Validation features shape:', X_test.shape)
 
-    EPOCHS = epochs
-    BATCH_SIZE = batch_size
     val_data = (X_test,Y_test)
-    #checkpoint = ModelCheckpoint("model_weights.h5", monitor='val_precision', verbose=1, save_best_only=True, mode='max')
-    #callbacks_list = [checkpoint]
+    
+
+    checkpoint = ModelCheckpoint("model_weights.h5", monitor='val_precision',save_weights_only=True, verbose=1, save_best_only=True, mode='max')      
     early_stopping = tf.keras.callbacks.EarlyStopping(
         monitor = 'val_loss',
         verbose = 1,
         patience = 200,
         mode = 'min',
         restore_best_weights = True)
+    
+    callbacks_list = [checkpoint, early_stopping]
 
     model = make_model(metrics = METRICS)
     model.summary()
     
-    initial_weights = os.path.join(tempfile.mkdtemp(),'initial_weights')
-    model.save_weights(initial_weights)
+    #initial_weights = os.path.join(tempfile.mkdtemp(),'initial_weights')
     
-    model.load_weights(initial_weights)
+    if os.path.isfile('model_weights.h5'):
+        model.load_weights('model_weights.h5')
     
     
     history=model.fit(X_train,
@@ -259,14 +263,15 @@ def classifier(first_col, last_col, epochs, batch_size, seed = 13):
                       shuffle = True,
                       validation_data=val_data,
                       #validation_freq=5,
-                      callbacks = [early_stopping],
+                      callbacks = [callbacks_list],
                       batch_size = batch_size,
                       class_weight=class_weight
                      )
     
-    model.save_weights(initial_weights)
+    #model.save_weights(initial_weights)
     plot_metrics(history)
     
+    #model.save_weights('model_weights.h5')
     
     
     
@@ -288,24 +293,8 @@ def classifier(first_col, last_col, epochs, batch_size, seed = 13):
 
 
 
-class TestNotebook(unittest.TestCase):
-    def test_load_dataset_f_not_found(self):
-        with self.assertRaises(FileNotFoundError):
-            load_dataset('a.csv', 0, 3)
-    def test_load_dataset_column_err(self):
-        with self.assertRaises(ValueError):
-            load_dataset('analysis.csv', -1, -12)
-    def test_make_model_no_metric(self):
-        with self.assertRaises(ValueError):
-            make_model()
-    def test_classifier_wrong_args_values1(self):
-        with self.assertRaises(ValueError):
-            classifier(first_col = -3, last_col = 10, batch_size= 2, epochs= 1)
-    def test_classifier_wrong_args_values2(self):
-        with self.assertRaises(ValueError):
-            classifier(first_col = 3, last_col = -10, batch_size= 2, epochs= 1)
 
-#unittest.main(argv=[''], verbosity=2, exit=False)
+#
 
 
 # In[ ]:

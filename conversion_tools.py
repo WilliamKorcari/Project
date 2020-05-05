@@ -6,7 +6,7 @@ import uproot
 import csv
 import os
 import glob
-import unittest
+
 
 
 """def get_file_name(fname = "analysis.root"):
@@ -71,19 +71,18 @@ def unroll_tree(data, tree, of_name):
     """
 
     files_out= [] 
-    #data = uproot.open(file_name)[ttree]
     names = data[tree].keys()
 
 
     out = pd.DataFrame.from_dict(data[tree].arrays(names), dtype= str)
-    out.to_csv(of_name)
+    out.to_csv(of_name, index=False)
     files_out.append(of_name)
     print ('\nCreated csv file ' + of_name)
 
 
 
 
-def root_tree_to_csv(file, overwrite = False):
+def root_tree_to_csv(file, overwrite = True):
     """
     This function uses the previous methods to convert every root tree inside the desired file in to a .csv file.
     Also checks if the resulting file from the operation already exists and overwrites them depending on how the overwrite is set (False by default).
@@ -104,7 +103,7 @@ def root_tree_to_csv(file, overwrite = False):
         if os.path.isfile(out_file_name):
             if overwrite:
                 print ("\nOverwriting tree {} in file {}".format(tree, f))
-                unroll_tree(data, tree, out_file_name)                
+                unroll_tree(f, tree, out_file_name)                
             else:
                 print( out_file_name + " already exist and will not be overwritten...")
 
@@ -116,7 +115,7 @@ def root_tree_to_csv(file, overwrite = False):
 
 
 
-def label_column_writer(infile, outfile, fsignal = "signal_bbA_MA300tree.csv"):
+def label_column_writer(infile, outfile):
     """
 
     - infile: string. Sets the input file name;
@@ -138,30 +137,11 @@ def label_column_writer(infile, outfile, fsignal = "signal_bbA_MA300tree.csv"):
     else:
         bkg = ["background" for row in range(nrows)]
         df['label'] = bkg
-    df.to_csv(outfile)
+    df.to_csv(outfile, index=False)
 
 
 
-"""
-
-    reader = csv.reader(open(infile, 'r'))
-    writer = csv.writer(open(outfile, 'w'))
-    headers = next(reader)
-    headers.append("label")
-
-    writer.writerow(headers)
-    for row in reader:
-        if infile == fsignal:
-            row.append("signal")
-            writer.writerow(row)
-        else:
-            row.append("background")
-            writer.writerow(row)
-
-"""
-
-
-def add_label_column(files = [], overwrite = False):
+def add_label_column(files = [], overwrite = True):
     """
 
     - f_to_modify: list of file names of files (.csv format);
@@ -194,11 +174,11 @@ def add_label_column(files = [], overwrite = False):
 
 
 
-def file_merger(infiles, file_out_name, overwrite = False):
+def file_merger(infiles, file_out_name, overwrite = True):
     """
-    - infile_names = list of strings. Sets the name of file to merge.
+    - infiles = list of strings. Sets the name of file to merge.
 
-    - outfile_name: string. Sets the name of the file produced as an outcome of the method;
+    - file_out_name: string. Sets the name of the file produced as an outcome of the method;
 
     - overwrite: True/False (default False).
 
@@ -228,11 +208,10 @@ def file_merger(infiles, file_out_name, overwrite = False):
         combined_csv.to_csv( file_out_name, index=False, encoding='utf-8-sig')
 
 
-
-def main(f, label = True, out_f_name = 'analysis.csv', overwrite_trees = False, overwrite_csv = False):
+def converter(f, label = True, out_f_name = 'analysis.csv', overwrite_trees = True, overwrite_csv = True):
     """
     Executes all the functions to convert the root file in to a csv file.
-    - file_name: string indicating file to convert;
+    - f: string indicating file to convert;
     - label = boolean. True produces files with label column;
     - out_f_name = string. Sets name of output file;
     - overwrite_trees = boolean. True overwrites tree files if file with the same name is found in dir;
@@ -242,7 +221,7 @@ def main(f, label = True, out_f_name = 'analysis.csv', overwrite_trees = False, 
     
     
     if label:
-        csv_files = add_label_column(root_tree_to_csv(file = f, overwrite = overwrite_trees))
+        csv_files = add_label_column(root_tree_to_csv(file = f, overwrite = overwrite_trees), overwrite = overwrite_csv)
     else:
         csv_files = root_tree_to_csv(file = f, overwrite = overwrite_trees)
 
@@ -252,107 +231,6 @@ def main(f, label = True, out_f_name = 'analysis.csv', overwrite_trees = False, 
     file_merger(infiles= csv_files, file_out_name = out_f_name, overwrite = overwrite_csv)
 
 
-
-class TestNotebook(unittest.TestCase):
-    
-    def test_file_merger_value_empty(self):
-        with self.assertRaises(ValueError):
-            file_merger([], 'a.csv')
-            
-    def test_file_merger_value_extenction(self):
-        with self.assertRaises(ValueError):
-            f = open("a.root", 'w+')
-            file_merger(f,'a.csv')
-            clean()
-            
-    def test_file_merger__f_not_found(self):
-        with self.assertRaises(FileNotFoundError):
-            file_merger('b.root', 'a.csv')
-            clean()
-     
-    
-    
-    def test_add_label_column_f_not_found_empty(self):
-        with self.assertRaises(FileNotFoundError):
-            add_label_column([])
-            
-    def test_add_label_column_value(self):
-        with self.assertRaises(ValueError):
-            f = open("a.root", 'w+')
-            add_label_column(["a.root"])
-            clean()
-            
-    def test_add_label_column_f_not_found(self):
-        with self.assertRaises(FileNotFoundError):
-            add_label_column(["a.csv"])
-    
-    
-    def test_label_column_writer_f_not_found(self):
-        with self.assertRaises(FileNotFoundError):
-            clean()
-            label_column_writer('a.csv', 'b.csv')
-            
-            
-    def test_label_column_writer__value_file1(self):
-        with self.assertRaises(ValueError):
-            label_column_writer('a.root', 'b.csv')
-            
-    def test_label_column_writer__value_file2(self):
-        with self.assertRaises(ValueError):
-            f = open("a.csv", 'w+')
-            label_column_writer('a.csv', 'b.root')
-            clean()
-    
-    def test_root_tree_to_csv_value(self):
-        with self.assertRaises(ValueError):
-            f = open("a.root", 'w+')
-            get_tree_names("a.root")
-            clean()
-            
-    def test_root_tree_to_csv__file_type(self):
-        with self.assertRaises(ValueError):
-            f = open("a.csv", 'w+')
-            get_tree_names("a.csv")
-            clean()
-            
-    def test_root_tree_to_csv_f_not_found(self):
-        with self.assertRaises(FileNotFoundError):
-            get_tree_names("b.root")
-    
-
-    def test_unroll_tree_value(self):
-        with self.assertRaises(ValueError):
-            f = open("a.root", 'w+')
-            unroll_tree("a.root", "tree", "out_f")
-            clean()
-    def test_unroll_tree_f_not_found(self):
-        with self.assertRaises(FileNotFoundError):
-            unroll_tree("b.root", "tree", "out_f")
-
-      
-    
-    
-    def test_get_tree_names_f_not_found(self):
-        with self.assertRaises(FileNotFoundError):
-            get_tree_names("b.root")
-            
-    def test_get_tree_names_value(self):
-        with self.assertRaises(ValueError):
-            f = open("a.root", 'w+')
-            get_tree_names("a.root")
-            clean()
-
-    def test_get_file_name_positive_test(self):
-        f = open("a.root", 'w+')
-        self.assertEqual(get_file_name("a.root"), "a.root")
-        clean()
-    
-    
-    def test_get_file_name_ext_error(self):
-        self.assertFalse(get_file_name("a"), "a")
-        
-    def test_get_file_name_empty_txt(self):
-        self.assertFalse(get_file_name(""), "")
     
     
 

@@ -32,29 +32,23 @@ def is_signal(file_name):
 		return True
 	return False
 
-def get_tree_names(file, keys):
+def get_tree_names(file, trees):
     """
     Takes as an argument a file name (string). 
     Looks for root trees inside that file and returns a list of the cleaned up tree names.
     """
-    try:
+  
+    tree_names=[]
+
+    print("\n Tree names successfully stored. They are: \n")
+    for tree in trees:
+        tree = str(tree)
+        tree = tree[2:len(tree)-3]
+        tree_names.append(tree)
+        print(tree)
+        print('\n')
         
-        trees = keys
-        tree_names=[]
-
-        print("\n Tree names successfully stored. They are: \n")
-        for tree in trees:
-            tree = str(tree)
-            tree = tree[2:len(tree)-3]
-            tree_names.append(tree)
-            print(tree)
-            print('\n')
-            
-        return tree_names
-
-    except (ValueError, FileNotFoundError):
-        print ("\n ERROR: Trees or File not found. Check before continuing...\n")
-        raise
+    return tree_names
 
 
 
@@ -229,26 +223,6 @@ def converter(f, label = True, out_f_name = 'analysis.csv', overwrite_trees = Tr
         print('Created ' + element)
     
     file_merger(infiles= csv_files, file_out_name = out_f_name, overwrite = overwrite_csv)
-
-
-    
-    
-
-
-def clean():
-    """Cleans directory after tests are performed.""" #just to keep directory clean
-    if (os.path.isfile('a.root')):
-        os.remove('a.root')
-    if (os.path.isfile('a.csv')):
-        os.remove('a.csv')
-    if (os.path.isfile('b.csv')):
-        os.remove('b.csv')
-    else:
-        pass
-
-
-
-clean()
 
 
 

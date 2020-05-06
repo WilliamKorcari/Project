@@ -6,7 +6,7 @@ import classification_tools as ct
 import uproot
 import unittest
 import filecmp
-from os import chdir
+
 class TestNotebook(unittest.TestCase):
     #classification_tools   
     def test_make_model_no_metric(self):
@@ -76,9 +76,9 @@ class TestNotebook(unittest.TestCase):
         self.assertEqual(conv.get_tree_names(sample, trees), ['ntuple'])
     
 
-
     def test_is_signal(self):
         self.assertTrue(conv.is_signal('is_signal'), 'Error')
+ 
     def test_is_signal(self):
         self.assertFalse(conv.is_signal('is_langis'), 'Error')
 

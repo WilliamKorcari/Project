@@ -8,22 +8,6 @@ import os
 import glob
 
 
-
-"""def get_file_name(fname = "analysis.root"):
-    
-    file_name = fname
-    if file_name is not '' and file_name.endswith('.root'):
-        if os.path.isfile(file_name):
-            return file_name
-        else:
-            print('\n No such file... Try again. \n')
-            get_file_name()
-    else:
-        print ("\n No input or wrong file format given... Try again. \n")
-        get_file_name()
- """       
-
-
 def is_signal(file_name):
 	"""
 	If input string contains signal returns True. 
@@ -34,8 +18,9 @@ def is_signal(file_name):
 
 def get_tree_names(file, trees):
     """
-    Takes as an argument a file name (string). 
-    Looks for root trees inside that file and returns a list of the cleaned up tree names.
+    file = open root file (by uproot.open(file))
+    trees = trees contained in files (list)
+    Returns list of cleaned tree names contained in file.
     """
   
     tree_names=[]
@@ -54,11 +39,10 @@ def get_tree_names(file, trees):
 
 def unroll_tree(data, tree, of_name):
     """
-    - file_name: string that contains the name of the file to convert into .csv format file;
+    - data = open root file
+    - tree: list of string representing the names of the trees inside the file to convert;
 
-    - ttree: list of string representing the names of the trees inside the file to convert;
-
-    - of_name: string that names the *.csv* file produced by this function.
+    - of_name: string that names the csv file produced by this function.
 
     This function is used inside root_tree_to_csv() (see next) function and so the arguments are initialized automatically inside that function. 
     This method returns a .csv file that contains the converted data from a single tree of the initial .root file. 
@@ -78,9 +62,10 @@ def unroll_tree(data, tree, of_name):
 
 def root_tree_to_csv(file, overwrite = True):
     """
-    This function uses the previous methods to convert every root tree inside the desired file in to a .csv file.
-    Also checks if the resulting file from the operation already exists and overwrites them depending on how the overwrite is set (False by default).
-    returns list of string (names ofproduced files).
+    - file: string. File to convert
+    - overwrite: bool. True overwrites already existing file with same name.
+
+    Converts input root file in to a csv file.
     """
 
     f = uproot.open(file)
@@ -115,10 +100,9 @@ def label_column_writer(infile, outfile):
     - infile: string. Sets the input file name;
 
     - outfile: string. Sets the output file name;
+    
+    Adds column with header 'Label' and fills rows with either 'signal' or background' depending on type of file
 
-    - fsignal: A string used to identify the signal file. Each file name is compared to that string, if the strings match the algorithm identifies the file as a signal file.
-
-    This method manipulates the input file in order to add a *label* column and to fill in values ('background' or 'signal' for each entry of the file.
     """
 
     df = pd.read_csv(infile)
@@ -138,7 +122,7 @@ def label_column_writer(infile, outfile):
 def add_label_column(files = [], overwrite = True):
     """
 
-    - f_to_modify: list of file names of files (.csv format);
+    - files: list of file names;
 
     - overwrite: True/False. False by default.
 

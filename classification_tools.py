@@ -1,5 +1,5 @@
-
-
+#!/usr/bin/env python
+# coding: utf-8
 import os
 import tempfile
 import numpy as np
@@ -27,7 +27,8 @@ from sklearn.preprocessing import StandardScaler
 
 def plot_metrics(history):
     """
-    - plot_metrics(history): plots different variables after performing training of the aNN.
+    - plot_metrics(history): plots different variables after performing training of the aNN. 
+    Takes as parameter output of training.
     """
     mpl.rcParams['figure.figsize'] = (12, 10)
     colors = plt.rcParams['axes.prop_cycle'].by_key()['color']    #plot configurations
@@ -147,33 +148,16 @@ def make_model(metrics = None, output_bias = None):
                  )
     return model
 
-"""
-
-def set_dataset_par(dataset_name, start_col, end_col):
-    if not os.path.isfile(dataset_name):
-        raise FileNotFoundError
-    if start_col < 0 or start_col > end_col or end_col<0:
-        print("Wrong column initialization...")
-        raise ValueError
-        return
-
-    info = {
-        "dataset_name" : dataset_name,
-        "first_column"     : start_col,
-        "last_column"      : end_col
-    }
-    
-    return info
-"""
 
 
 def classifier(file, first_col, last_col, epochs, batch_size, seed = 13):
     """
-1. first_col: first column to consider for the dataset
-    2. last_col: last column to consider for the dataset (tipically label column)
-    3. epochs: positive integer number.
-    4. batch_size: positive integer number. 
-    5. seed: positive integer number.
+    - file: input file (string)
+    - first_col: first column to consider for the dataset
+    - last_col: last column to consider for the dataset (tipically label column)
+    - epochs: positive integer number.
+    - batch_size: positive integer number. 
+    - seed: positive integer number.
     
     Performs classification and plots metrics and confusion matrix.
 
@@ -188,7 +172,6 @@ def classifier(file, first_col, last_col, epochs, batch_size, seed = 13):
                ]                                        #metrics: modify here to add or remove metric
 
 
-    #dset = load_dataset("analysis.csv", start_col=first_col, end_col=last_col)    
     dataframe = read_csv(file, header=0)
     dataset = dataframe.values
 
@@ -267,16 +250,11 @@ def classifier(file, first_col, last_col, epochs, batch_size, seed = 13):
                       batch_size = batch_size,
                       class_weight=class_weight
                      )
-    
-    #model.save_weights(initial_weights)
+
     plot_metrics(history)
     
-    #model.save_weights('model_weights.h5')
     
-    
-    
-    
-    #compute predictions
+
     predictions = model.predict(X_test)
 
     y_pred = np.array([np.argmax(probas) for probas in predictions])
@@ -285,19 +263,8 @@ def classifier(file, first_col, last_col, epochs, batch_size, seed = 13):
     classes = unique_labels(y_test, y_pred)
     class_names = unique_labels(Y)
 
-    #confusion matrix
-
     plot_confusion_matrix(y_test, y_pred, classes, class_names)
 
-
-
-
-
-
-#
-
-
-# In[ ]:
 
 
 
